@@ -1,4 +1,4 @@
-import express, { response } from "express";
+import express, { request, response } from "express";
 import cors from "cors"
 
 
@@ -18,7 +18,36 @@ app.post("/sign-up",(request,response)=>{
 app.post("/tweets",(request, response)=>{
     tweets.push(request.body);
     response.send("Ok");
-    console.log(tweets);
+    tweets.map(item =>{
+    
+        users.filter(user =>{
+            if(user.username === item.username){
+                item.avatar = user.avatar;
+            };
+        })
+    })
+});
+
+
+
+app.get("/tweets",(request, response)=>{
+    const lastTenTweets =[];
+    const numberOfTweets = tweets.length;
+    const lastTweetIndex = tweets.length-1;
+    const renderTweetsperpage = 10;
+    
+    if(numberOfTweets <= renderTweetsperpage){
+        for (let i = lastTweetIndex; i >= 0 ; i --){
+            lastTenTweets.push(tweets[i]);
+        };
+    }else{
+        const indexOfTheTenthTweet = numberOfTweets - renderTweetsperpage
+        for (let i = lastTweetIndex ; i >= indexOfTheTenthTweet; i -- ){
+            lastTenTweets.push(tweets[i]);
+        };
+    };       
+    
+    response.send(lastTenTweets);
 });
 
 
