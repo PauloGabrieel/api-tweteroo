@@ -10,14 +10,32 @@ const users = [];
 const tweets = [];
 
 app.post("/sign-up",(request,response)=>{
-    users.push(request.body);
-    response.send("Ok");
-    
+    const {username, avatar} = request.body;
+    if(!username || !avatar){
+        response.status(400).send("Todos os campos são obrigatórios");
+        return;
+    }
+    users.push({
+        username,
+        avatar
+    });
+    response.status(201).send(users);
 });
 
 app.post("/tweets",(request, response)=>{
-    tweets.push(request.body);
-    response.send("Ok");
+
+    const {username,tweet} = request.body;
+
+    if(!username || !tweet){
+        response.status(400).send("Todos os campos são obrigatórios");
+        return;
+    }
+    tweets.unshift({
+        username,
+        tweet
+    });
+    response.status(201).send(tweets);
+    
     tweets.map(item =>{
     
         users.filter(user =>{
