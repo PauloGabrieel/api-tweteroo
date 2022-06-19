@@ -6,8 +6,50 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const users = [];
-const tweets = [];
+const users = [
+	{
+		username: "bobesponja",
+		avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info",
+	    
+	},
+    {
+		username: "Paulo",
+		avatar: "Imagem Paulo",
+	   
+	},
+    {
+		username: "Gabriel",
+		avatar: "Imagem Gabriel",
+	    
+	}
+];
+const tweets = [
+    {
+		username: "bobesponja",
+	    tweet: "eu amo o hub"
+	},
+    {
+		username: "Paulo",
+	    tweet: "Nossa, eu tbm!"
+	},
+    {
+		username: "Gabriel",
+	    tweet: "É pq vcs ainda não chegaram no módulo 3"
+	},
+    {
+		username: "Gabriel",
+	    tweet: "Aí que a jiripoca pia"
+	},
+    {
+		username: "Gabriel",
+	    tweet: "hahha"
+	},
+
+    {
+		username: "Paulo",
+	    tweet: "Ferrou, hahaha"
+	}
+];
 
 app.post("/sign-up",(request,response)=>{
     const {username, avatar} = request.body;
@@ -46,7 +88,11 @@ app.post("/tweets",(request, response)=>{
     })
 });
 
-
+app.get("/tweets/:username",(request,response)=>{
+    const {username} = request.params;
+    const userTweets = tweets.filter(tweet => tweet.username === username);
+    response.send(userTweets);  
+})
 
 app.get("/tweets",(request, response)=>{
     const lastTenTweets =[];
