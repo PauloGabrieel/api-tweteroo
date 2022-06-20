@@ -24,9 +24,9 @@ app.post("/sign-up",(request,response)=>{
 });
 
 app.post("/tweets",(request, response)=>{
-    const username = request.headers.User;
-    const {tweet} = request.body;
-
+    const username = request.headers.user;
+    const tweet = request.body.tweet;
+    
     if(!tweet){
         response.status(400).send("Todos os campos são obrigatórios");
         return;
@@ -35,8 +35,6 @@ app.post("/tweets",(request, response)=>{
         username,
         tweet
     });
-    response.status(201).send(tweets);
-    
     tweets.map(item =>{
     
         users.filter(user =>{
@@ -44,7 +42,8 @@ app.post("/tweets",(request, response)=>{
                 item.avatar = user.avatar;
             };
         })
-    })
+    });
+    response.status(201).send(tweets);
 });
 
 app.get("/tweets/:username",(request,response)=>{
@@ -55,17 +54,31 @@ app.get("/tweets/:username",(request,response)=>{
 
 app.get("/tweets",(request, response)=>{
     const page = parseInt(request.query.page);
-    const endTweets = (page * 10);
-    const startTweets = (endTweets - 10) 
+    const numberTweetsPerPage = 10;
+    const startVisualization = (page * numberTweetsPerPage) - numberTweetsPerPage; 
+    let endVisualization = page * numberTweetsPerPage;
     const newTweets = [];
     
+
+
+    if(tweets.length === 0){
+        response.status(200).send(newTweets);
+        return;
+    }
+
     if(!page || page < 1){
         response.status(400).send("Informe uma página válida!");
         return;
     };
-    for (let i = startTweets ; i < endTweets ; i++ ){
+    
+    if(tweets.length < endVisualization){
+        endVisualization = tweets.length;
+    }
+    
+    for (let i = startVisualization ; i < endVisualization ; i++ ){
         newTweets.push(tweets[i]);
     };
+    console.log(startVisualization);
     response.status(200).send(newTweets);
 
 });
