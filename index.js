@@ -2,6 +2,7 @@ import express, { request, response } from "express";
 import cors from "cors"
 
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,10 +24,10 @@ app.post("/sign-up",(request,response)=>{
 });
 
 app.post("/tweets",(request, response)=>{
+    const username = request.headers.User;
+    const {tweet} = request.body;
 
-    const {username,tweet} = request.body;
-
-    if(!username || !tweet){
+    if(!tweet){
         response.status(400).send("Todos os campos são obrigatórios");
         return;
     }
@@ -53,23 +54,20 @@ app.get("/tweets/:username",(request,response)=>{
 })
 
 app.get("/tweets",(request, response)=>{
-    const lastTenTweets =[];
-    const numberOfTweets = tweets.length;
-    const lastTweetIndex = tweets.length-1;
-    const renderTweetsperpage = 10;
+    const page = parseInt(request.query.page);
+    const endTweets = (page * 10);
+    const startTweets = (endTweets - 10) 
+    const newTweets = [];
     
-    if(numberOfTweets <= renderTweetsperpage){
-        for (let i = lastTweetIndex; i >= 0 ; i --){
-            lastTenTweets.push(tweets[i]);
-        };
-    }else{
-        const indexOfTheTenthTweet = numberOfTweets - renderTweetsperpage
-        for (let i = lastTweetIndex ; i >= indexOfTheTenthTweet; i -- ){
-            lastTenTweets.push(tweets[i]);
-        };
-    };       
-    
-    response.send(lastTenTweets);
+    if(!page || page < 1){
+        response.status(400).send("Informe uma página válida!");
+        return;
+    };
+    for (let i = startTweets ; i < endTweets ; i++ ){
+        newTweets.push(tweets[i]);
+    };
+    response.status(200).send(newTweets);
+
 });
 
 
